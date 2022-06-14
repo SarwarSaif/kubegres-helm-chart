@@ -7,6 +7,8 @@
 ### Configuration for the kubegres contorller / operator
 ---
 global:
+  serviceAccountName: kubegres-controller-manager
+  controlPlaneName: controller-manager
 
 replicas:
   controller: 3
@@ -32,6 +34,12 @@ manager:
     requests:
       cpu: "10m"
       memory: "20Mi"
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
 
 postgres:
   image:

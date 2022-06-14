@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    control-plane: controller-manager
-  name: kubegres-controller-manager
-  namespace: kubegres-system
+    control-plane: {{ .Values.global.controlPlaneName }}
+  name: {{ .Values.global.serviceAccountName }}
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.replicas.controller }}
   selector:
     matchLabels:
-      control-plane: controller-manager
+      control-plane: {{ .Values.global.controlPlaneName }}
   template:
     metadata:
       labels:
-        control-plane: controller-manager
+        control-plane: {{ .Values.global.controlPlaneName }}
     spec:
       containers:
       - args:
@@ -33,25 +33,24 @@ spec:
         command:
         - /manager
         image: "{{- .Values.manager.image.repository -}}:{{- .Values.manager.image.tag }}"
-        # image : reactivetechio/kubegres:1.15
+        name: manager
         livenessProbe:
           httpGet:
             path: /healthz
             port: 8081
-          initialDelaySeconds: 15
-          periodSeconds: 20
-        name: manager
+          initialDelaySeconds: {{ toYaml .Values.manager.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ toYaml .Values.manager.livenessProbe.periodSeconds }}
         readinessProbe:
           httpGet:
             path: /readyz
             port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 10
+          initialDelaySeconds: {{ toYaml .Values.manager.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ toYaml .Values.manager.readinessProbe.periodSeconds }}
         resources:
 {{ toYaml .Values.manager.resources | indent 12 }}
         securityContext:
           allowPrivilegeEscalation: false
       securityContext:
         runAsNonRoot: true
-      serviceAccountName: kubegres-controller-manager
+      serviceAccountName: {{ .Values.global.serviceAccountName }}
       terminationGracePeriodSeconds: 10
