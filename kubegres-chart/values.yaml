@@ -7,54 +7,38 @@
 ### Configuration for the kubegres contorller / operator
 ---
 global:
-controller:
-  replicaCount: 3
-  proxy:
-    image:
-      registry: docker.io
-      repository: gcr.io/kubebuilder/kube-rbac-proxy
-      tag: v0.8.0
-    ports:
-      containerPort: 8443
-  manager:
-    image:
-      registry: docker.io
-      repository: reactivetechio/kubegres
-      tag: 1.15
-    resources:
-      limits:
-        cpu: "100m"
-        memory: "20Mi"
-      requests:
-        cpu: "100m"
-        memory: "60Mi"
-  ### All the Probes ###
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
-    successThreshold: 1
-    failureThreshold: 6
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 5
-    periodSeconds: 10
-    timeoutSeconds: 5
-    successThreshold: 1
-    failureThreshold: 6
-  startupProbe:
-    enabled: false
-    initialDelaySeconds: 5
-    periodSeconds: 10
-    timeoutSeconds: 5
-    successThreshold: 1
-    failureThreshold: 10
-kubegresql:
-  replicaCount: 3
+
+replicas:
+  controller: 3
+  postgres: 3
+
+proxy:
+  image:
+    registry: docker.io
+    repository: gcr.io/kubebuilder/kube-rbac-proxy
+    tag: v0.8.0
+  ports:
+    containerPort: 8443
+
+manager:
+  image:
+    registry: docker.io
+    repository: reactivetechio/kubegres
+    tag: 1.15
+  resources:
+    limits:
+      cpu: "10m"
+      memory: "20Mi"
+    requests:
+      cpu: "10m"
+      memory: "20Mi"
+
+postgres:
   image:
     registry: docker.io
     repository: gcr.io/kubebuilder/kube-rbac-proxy
     tag: v0.8.0
 ---
 
+
+# helm install kubegres-test kubegres-chart/ --namespace kubegres-system

@@ -6,7 +6,7 @@ metadata:
   name: kubegres-controller-manager
   namespace: kubegres-system
 spec:
-  replicas: {{ .Values.controller.replicaCount }}
+  replicas: {{ .Values.replicas.controller }}
   selector:
     matchLabels:
       control-plane: controller-manager
@@ -21,10 +21,10 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=10
-        image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag}}"
+        image: "{{- .Values.proxy.image.repository -}}:{{- .Values.proxy.image.tag }}"
         name: kube-rbac-proxy
         ports:
-        - containerPort: 8443
+        - containerPort: {{ .Values.proxy.ports.containerPort }}
           name: https
       - args:
         - --health-probe-bind-address=:8081
@@ -32,7 +32,8 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: reactivetechio/kubegres:1.15
+        image: "{{- .Values.manager.image.repository -}}:{{- .Values.manager.image.tag }}"
+        # image : reactivetechio/kubegres:1.15
         livenessProbe:
           httpGet:
             path: /healthz
@@ -47,12 +48,7 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
         resources:
-          limits:
-            cpu: 100m
-            memory: 60Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
+{{ toYaml .Values.manager.resources | indent 12 }}
         securityContext:
           allowPrivilegeEscalation: false
       securityContext:
