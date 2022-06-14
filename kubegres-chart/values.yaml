@@ -41,7 +41,7 @@ manager:
     initialDelaySeconds: 5
     periodSeconds: 10
 
-postgres:
+postgresql:
   image:
     registry: docker.io
     repository: gcr.io/kubebuilder/kube-rbac-proxy

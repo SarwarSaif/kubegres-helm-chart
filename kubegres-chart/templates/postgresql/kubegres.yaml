@@ -1,0 +1,81 @@
+apiVersion: kubegres.reactive-tech.io/v1
+kind: Kubegres
+metadata:
+  name: mypostgres
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": "post-install" # Added Hook so that it gets installed after the Controller
+spec:
+   replicas: 3
+   image: postgres:14.1
+   database:
+      size: 20Mi
+#    scheduler:
+#       affinity: 
+#          nodeAffinity:
+#            requiredDuringSchedulingIgnoredDuringExecution:
+#              nodeSelectorTerms:
+#              - matchExpressions:
+#                - key: kubernetes.io/hostname
+#                  operator: NotIn
+#                  values:
+#                  - node1
+#                  - node2
+#          podAntiAffinity:
+#             preferredDuringSchedulingIgnoredDuringExecution:
+#                - weight: 100
+#                  podAffinityTerm:
+#                     labelSelector:
+#                        matchExpressions:
+#                          - key: app
+#                            operator: In
+#                            values:
+#                            - mypostgres
+#                     topologyKey: "kubernetes.io/hostname"
+   # scheduler:
+   #    affinity:
+   #       nodeAffinity:
+   #       requiredDuringSchedulingIgnoredDuringExecution:
+   #         nodeSelectorTerms:
+   #         - matchExpressions:
+   #           - key: kubernetes.io/hostname
+   #             operator: NotIn
+   #             values:
+   #             - node1
+   probe:
+      livenessProbe:
+         exec:
+            command:
+              - sh
+              - -c
+              - exec pg_isready -U postgres -h $POD_IP
+         failureThreshold: 10
+         initialDelaySeconds: 100
+         periodSeconds: 20
+         successThreshold: 1
+         timeoutSeconds: 15
+
+      readinessProbe:
+         exec:
+            command:
+              - sh
+              - -c
+              - exec pg_isready -U postgres -h $POD_IP
+         failureThreshold: 3
+         initialDelaySeconds: 50
+         periodSeconds: 5
+         successThreshold: 1
+         timeoutSeconds: 3
+
+   env:
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: mypostgres-secret
+              key: superUserPassword
+      - name: POSTGRES_REPLICATION_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: mypostgres-secret
+              key: replicationUserPassword
+
