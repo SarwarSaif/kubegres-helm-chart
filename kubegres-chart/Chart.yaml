@@ -1,9 +1,15 @@
 apiVersion: v2
-name: kubegres-chart
-description: A Helm chart for Kubegres
+name: kubegres-controller-chart
+description: A Helm chart for the Kubegres Controller
 type: application
 version: 0.1.0
 appVersion: "1.15.0"
+### For Addition of Dependency, I need Chart
+# dependencies:
+# - condition: controller.enabled
+#   name: kubegres-controller-chart
+#   repository: gcr.io/kubebuilder/kube-rbac-proxy
+#   version: v0.8.0
 sources:
   - https://github.com/reactive-tech/kubegres
   - https://github.com/SarwarSaif/kubegres-helm-chart
