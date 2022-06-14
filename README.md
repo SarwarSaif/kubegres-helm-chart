@@ -1,2 +1,2 @@
 # kubegres-helm-chart
-This is an helm chart implementation for the kubegres.
+This is a helm chart implementation for the kubegres.
