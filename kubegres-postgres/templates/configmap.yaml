@@ -15,5 +15,5 @@ data:
 kind: ConfigMap
 metadata:
   name: kubegres-manager-config
-  namespace: kubegres-system
+  namespace: {{ .Release.Namespace }}
 ---
