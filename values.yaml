@@ -21,20 +21,76 @@ postgresql:
     # tag: v0.8.0
     repository: docker.io/postgres
     tag: 14.1
+  port: 5432
   database:
     size: 20Mi
-  livenessProbe:
+    storageClassName: standard
+    volumeMount: /var/lib/postgresql/data
+  resources:
+    limits:
+        memory: "40Mi"
+        cpu: "10m"
+    requests:
+        memory: "20Mi"
+        cpu: "10m"
+
+  livenessProbe: |
+    exec:
+      command:
+        - sh
+        - -c
+        - exec pg_isready -U postgres -h $POD_IP
     failureThreshold: 10
     initialDelaySeconds: 15
     periodSeconds: 20
     successThreshold: 1
     timeoutSeconds: 15
-  readinessProbe:
+  readinessProbe: |
     failureThreshold: 3
     initialDelaySeconds: 5
     periodSeconds: 5
     successThreshold: 1
     timeoutSeconds: 3
+  customConfiguration:
+    secretName: mypostgres-conf
+    postgresConf: |
+      # Replication configs
+      listen_addresses = '*'
+      #  max_wal_senders = 10
+      #  wal_keep_segments = 48 #in Mb
+      max_connections = 2000
+      #  shared_buffers = 128MB
+
+      # Logging
+      #  log_destination = 'stderr,csvlog'
+      #  logging_collector = on
+      #  log_directory = 'pg_log'
+      #  log_filename= 'postgresql-%Y-%m-%d_%H%M%S.log'
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - uhn7kl4r3rbwk001.rmnkiba.local
+            - uhn7kl4r3rbwk002.rmnkiba.local
+            - uhn7kl4r3rbwk003.rmnkiba.local
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                      - mypostgres
+              topologyKey: "kubernetes.io/hostname"
+
+
+
 ---
 
 

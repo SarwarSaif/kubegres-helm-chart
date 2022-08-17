@@ -8,9 +8,12 @@ k apply -f kubegres-crd/custom-resource-kubegres.yaml -n kubegres
 ```
 2. Helm Installation
 ```
-helm upgrade --install kubegres-helm-test kubegres-postgres/ -n kubegres
+helm upgrade --install kubegres-helm-test kubegres-helm-chart/ -n kubegres
 ```
 3. Uninstallation
 ```
 helm delete kubegres-helm-test -n kubegres
 ```
+
+## Kubegres Documentation
+https://www.kubegres.io/doc/properties-explained.html
