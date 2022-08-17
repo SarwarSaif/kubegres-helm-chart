@@ -12,7 +12,7 @@ global:
 
 replicas:
   controller: 3
-  postgres: 3
+  postgresql: 3
 
 proxy:
   image:
@@ -46,6 +46,20 @@ postgresql:
     registry: docker.io
     repository: gcr.io/kubebuilder/kube-rbac-proxy
     tag: v0.8.0
+  database:
+    size: 20Mi
+  livenessProbe:
+    failureThreshold: 10
+    initialDelaySeconds: 15
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 15
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 3
 ---
 
 
