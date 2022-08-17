@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: {{ .Release.Namespace }}-kubegres-manager-role
+  name: kubegres-manager-role
 rules:
 - apiGroups:
   - ""
@@ -126,7 +126,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Release.Namespace }}-kubegres-metrics-reader
+  name: kubegres-metrics-reader
 rules:
 - nonResourceURLs:
   - /metrics
@@ -136,7 +136,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Release.Namespace }}-kubegres-proxy-role
+  name: kubegres-proxy-role
 rules:
 - apiGroups:
   - authentication.k8s.io

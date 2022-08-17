@@ -1,0 +1,43 @@
+# Default values for kubegres-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# global:
+
+### Configuration for the kubegres contorller / operator
+---
+global:
+  serviceAccountName: kubegres-controller-manager
+  controlPlaneName: controller-manager
+
+replicas:
+  controller: 3
+
+proxy:
+  image:
+    repository: gcr.io/kubebuilder/kube-rbac-proxy
+    tag: v0.8.0
+  ports:
+    containerPort: 8443
+
+manager:
+  image:
+    repository: reactivetechio/kubegres
+    tag: 1.15
+  resources:
+    limits:
+      cpu: "10m"
+      memory: "20Mi"
+    requests:
+      cpu: "10m"
+      memory: "20Mi"
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+
+
+# helm install kubegres-test kubegres-chart/ --namespace kubegres-system

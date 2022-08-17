@@ -1,0 +1,41 @@
+# Default values for kubegres-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# global:
+
+### Configuration for the kubegres contorller / operator
+---
+global:
+  serviceAccountName: kubegres-controller-manager
+  controlPlaneName: controller-manager
+
+replicas:
+  controller: 3
+  postgresql: 3
+
+postgresql:
+  image:
+    registry: docker.io
+    # repository: gcr.io/kubebuilder/kube-rbac-proxy
+    # tag: v0.8.0
+    repository: docker.io/postgres
+    tag: 14.1
+  database:
+    size: 20Mi
+  livenessProbe:
+    failureThreshold: 10
+    initialDelaySeconds: 15
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 15
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 3
+---
+
+
+# helm install kubegres-test kubegres-chart/ --namespace kubegres-system
