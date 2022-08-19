@@ -13,7 +13,15 @@ helm upgrade --install kubegres-helm-test kubegres-helm-chart/ -n kubegres
 3. Uninstallation
 ```
 helm delete kubegres-helm-test -n kubegres
+
+k delete cm base-kubegres-config
+k delete cm d5ccd92e.reactive-tech.io
+
+base-kubegres-config        7      159m
+d5ccd92e.reactive-tech.io   0      159m
+kube-root-ca.crt            1      170m
 ```
 
 ## Kubegres Documentation
 https://www.kubegres.io/doc/properties-explained.html
+https://www.kubegres.io/doc/override-default-configs.html

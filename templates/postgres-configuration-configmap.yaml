@@ -4,6 +4,28 @@ kind: ConfigMap
 metadata:
   name: {{ .Values.postgresql.customConfiguration.secretName }}
 data:
+  primary_init_script.sh: |
+    #!/bin/bash
+    set -e
+    
+    # This script assumes that the env-var $POSTGRES_DATABASE_PASSWORD contains the password of the custom user to create. 
+    # You can add any env-var in your Kubegres resource config YAML. 
+    
+    dt=$(date '+%d/%m/%Y %H:%M:%S');
+    echo "$dt - Running init script the 1st time Primary PostgreSql container is created...";
+
+    customDatabaseName="$POSTGRES_DATABASE_NAME"
+    customUserName="$POSTGRES_DATABASE_USERNAME"
+
+    echo "$dt - Running: psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER --dbname $POSTGRES_DB ...";
+
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER $customUserName WITH PASSWORD '$POSTGRES_DATABASE_PASSWORD';
+    CREATE DATABASE $customDatabaseName WITH OWNER=$customUserName ENCODING='UTF8';
+    GRANT ALL PRIVILEGES ON DATABASE "$customDatabaseName" to $customUserName;
+    EOSQL
+
+    echo "$dt - Init script is completed";
   postgres.conf: 
   {{ toYaml .Values.postgresql.customConfiguration.postgresConf | indent 2 }}
   # postgres.conf: |

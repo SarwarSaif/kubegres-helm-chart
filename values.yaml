@@ -9,6 +9,7 @@
 global:
   serviceAccountName: kubegres-controller-manager
   controlPlaneName: controller-manager
+  # clusterName: 
 
 replicas:
   controller: 3
@@ -22,6 +23,12 @@ postgresql:
     repository: docker.io/postgres
     tag: 14.1
   port: 5432
+  credentials: |
+    superUserPassword: "postgresSuperUserPsw"
+    replicationUserPassword: "postgresReplicaPsw"
+    databaseName: "artifactory"
+    databaseUserName: "postgres"
+    databaseUserPassword: "password123"
   database:
     size: 20Mi
     storageClassName: standard

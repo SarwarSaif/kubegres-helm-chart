@@ -53,7 +53,7 @@ spec:
               - -c
               - exec pg_isready -U postgres -h $POD_IP
          failureThreshold: 10
-         initialDelaySeconds: 120
+         initialDelaySeconds: 70
          periodSeconds: 20
          successThreshold: 1
          timeoutSeconds: 15
@@ -65,7 +65,7 @@ spec:
               - -c
               - exec pg_isready -U postgres -h $POD_IP
          failureThreshold: 3
-         initialDelaySeconds: 50
+         initialDelaySeconds: 20
          periodSeconds: 5
          successThreshold: 1
          timeoutSeconds: 3
@@ -73,10 +73,25 @@ spec:
       - name: POSTGRES_PASSWORD
         valueFrom:
            secretKeyRef:
-              name: mypostgres-secret
+              name: {{ .Release.Name }}-secret
               key: superUserPassword
       - name: POSTGRES_REPLICATION_PASSWORD
         valueFrom:
            secretKeyRef:
-              name: mypostgres-secret
-              key: replicationUserPassword
+               name: {{ .Release.Name }}-secret
+               key: replicationUserPassword
+      - name: POSTGRES_DATABASE_NAME
+        valueFrom:
+           secretKeyRef:
+               name: {{ .Release.Name }}-secret
+               key: databaseName
+      - name: POSTGRES_DATABASE_USERNAME
+        valueFrom:
+           secretKeyRef:
+               name: {{ .Release.Name }}-secret
+               key: databaseUserName
+      - name: POSTGRES_DATABASE_PASSWORD
+        valueFrom:
+           secretKeyRef:
+               name: {{ .Release.Name }}-secret
+               key: databaseUserPassword
